@@ -10,7 +10,7 @@ function todayIso() {
 
 export default function ApplyLeavePage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ start_date: "", end_date: "", reason: "" });
+  const [form, setForm] = useState({ leave_type: "ANNUAL", start_date: "", end_date: "", reason: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -21,6 +21,7 @@ export default function ApplyLeavePage() {
 
   function clientValidate() {
     const today = todayIso();
+    if (!form.leave_type) return "Please select a leave type.";
     if (!form.start_date || !form.end_date || !form.reason.trim()) {
       return "Please fill in the start date, end date, and a reason.";
     }
@@ -48,7 +49,7 @@ export default function ApplyLeavePage() {
     try {
       await leavesApi.apply(form);
       setSuccess("Your leave request has been filed and is pending manager approval.");
-      setForm({ start_date: "", end_date: "", reason: "" });
+      setForm({ leave_type: "ANNUAL", start_date: "", end_date: "", reason: "" });
       setTimeout(() => navigate("/employee/history"), 1200);
     } catch (err) {
       setError(extractErrorMessage(err));
@@ -81,6 +82,21 @@ export default function ApplyLeavePage() {
         {success && <div className="form-success">{success}</div>}
 
         <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="leave_type">Leave Type</label>
+            <select
+              id="leave_type"
+              value={form.leave_type}
+              onChange={(e) => update("leave_type", e.target.value)}
+              required
+            >
+              <option value="ANNUAL">🏖️ Annual Leave</option>
+              <option value="SICK">🤒 Sick Leave</option>
+              <option value="CASUAL">🎯 Casual Leave</option>
+              <option value="UNPAID">💼 Unpaid Leave</option>
+            </select>
+          </div>
+
           <div className="field-row">
             <div className="field">
               <label htmlFor="start_date">Start date</label>

@@ -35,6 +35,7 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "employee",
+            "leave_type",
             "start_date",
             "end_date",
             "number_of_days",
@@ -62,7 +63,7 @@ class LeaveRequestCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LeaveRequest
-        fields = ("id", "start_date", "end_date", "reason", "status")
+        fields = ("id", "leave_type", "start_date", "end_date", "reason", "status")
         read_only_fields = ("id", "status")
 
     def validate(self, attrs):

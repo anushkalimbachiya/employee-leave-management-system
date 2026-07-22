@@ -17,10 +17,21 @@ class LeaveRequest(models.Model):
         REJECTED = "REJECTED", "Rejected"
         CANCELLED = "CANCELLED", "Cancelled"
 
+    class LeaveType(models.TextChoices):
+        ANNUAL = "ANNUAL", "Annual Leave"
+        SICK = "SICK", "Sick Leave"
+        CASUAL = "CASUAL", "Casual Leave"
+        UNPAID = "UNPAID", "Unpaid Leave"
+
     employee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="leave_requests",
+    )
+    leave_type = models.CharField(
+        max_length=10,
+        choices=LeaveType.choices,
+        default=LeaveType.ANNUAL,
     )
     start_date = models.DateField()
     end_date = models.DateField()

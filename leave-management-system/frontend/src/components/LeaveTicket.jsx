@@ -22,6 +22,18 @@ export default function LeaveTicket({
       <div className="ticket-body">
         <div className="ticket-id">TICKET #{String(leave.id).padStart(5, "0")}</div>
 
+        {leave.leave_type && (
+          <div className="ticket-leave-type-badge" data-type={leave.leave_type}>
+            {leave.leave_type === "ANNUAL" && "🏖️"}
+            {leave.leave_type === "SICK" && "🤒"}
+            {leave.leave_type === "CASUAL" && "🎯"}
+            {leave.leave_type === "UNPAID" && "💼"}
+            {" "}{
+              { ANNUAL: "Annual Leave", SICK: "Sick Leave", CASUAL: "Casual Leave", UNPAID: "Unpaid Leave" }[leave.leave_type]
+            }
+          </div>
+        )}
+
         {showEmployee && (
           <div className="ticket-employee">
             {leave.employee?.full_name || leave.employee?.username}

@@ -862,3 +862,48 @@
     font-size: 22px;
   }
 }
+
+/* =========================================================================
+   LEAVE TYPE BADGE
+   ========================================================================= */
+
+.ticket-leave-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  background: var(--surface-2, #f1f5f9);
+  color: var(--text-2, #64748b);
+  border: 1px solid transparent;
+  width: fit-content;
+}
+
+.ticket-leave-type-badge[data-type="ANNUAL"] {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.ticket-leave-type-badge[data-type="SICK"] {
+  background: #fef9c3;
+  color: #a16207;
+  border-color: #fde68a;
+}
+
+.ticket-leave-type-badge[data-type="CASUAL"] {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.ticket-leave-type-badge[data-type="UNPAID"] {
+  background: #fdf2f8;
+  color: #9d174d;
+  border-color: #fbcfe8;
+}
