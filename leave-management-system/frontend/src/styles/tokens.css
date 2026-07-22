@@ -1,0 +1,112 @@
+/* =========================================================================
+   DESIGN SYSTEM — "The Registry"
+   A leave request reads like a travel voucher: a ticket stub with a
+   perforated tear-line and a rotated ink-stamp for its status. The rest
+   of the interface is a quiet, disciplined ledger book around it.
+   ========================================================================= */
+
+:root {
+  /* Color */
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --surface-sunken: #e4e8f0;
+  --ink: #1a2333;
+  --ink-soft: #4b5468;
+  --line: #d7deea;
+  --line-strong: #b9c3d6;
+
+  --brand: #375d81;
+  --brand-dark: #24405c;
+  --brand-tint: #e4edf5;
+
+  --stamp-approved: #2f7a4d;
+  --stamp-approved-tint: #e5f2ea;
+  --stamp-pending: #a3760a;
+  --stamp-pending-tint: #faf1de;
+  --stamp-rejected: #a23b3b;
+  --stamp-rejected-tint: #f8e9e9;
+  --stamp-cancelled: #6b7386;
+  --stamp-cancelled-tint: #eaecf1;
+
+  /* Type */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Layout */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 2px rgba(26, 35, 51, 0.04), 0 6px 20px rgba(26, 35, 51, 0.06);
+  --shadow-pop: 0 12px 32px rgba(26, 35, 51, 0.14);
+  --sidebar-w: 248px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Scrollbar (subtle, ledger-appropriate) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

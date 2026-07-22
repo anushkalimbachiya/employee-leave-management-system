@@ -1,0 +1,192 @@
+{
+  "info": {
+    "name": "Employee Leave Management System",
+    "description": "Complete API collection for the Django REST Framework backend: authentication (JWT), employee leave applications, and manager approval workflow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" },
+    { "key": "leave_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (obtain JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', data.access);",
+                  "pm.collectionVariables.set('refresh_token', data.refresh);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"manager1\",\n  \"password\": \"Manager@123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""] }
+          }
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login/refresh/", "host": ["{{base_url}}"], "path": ["auth", "login", "refresh", ""] }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"employee4\",\n  \"email\": \"employee4@technodha.com\",\n  \"first_name\": \"New\",\n  \"last_name\": \"Hire\",\n  \"password\": \"Employee@123\",\n  \"password2\": \"Employee@123\",\n  \"role\": \"EMPLOYEE\",\n  \"manager\": 1,\n  \"department\": \"Engineering\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/register/", "host": ["{{base_url}}"], "path": ["auth", "register", ""] }
+          }
+        },
+        {
+          "name": "Get my profile (me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/auth/me/", "host": ["{{base_url}}"], "path": ["auth", "me", ""] }
+          }
+        },
+        {
+          "name": "List managers",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/auth/managers/", "host": ["{{base_url}}"], "path": ["auth", "managers", ""] }
+          }
+        },
+        {
+          "name": "List employees (manager only)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/auth/employees/", "host": ["{{base_url}}"], "path": ["auth", "employees", ""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leave Requests",
+      "item": [
+        {
+          "name": "Apply for leave (Employee)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"start_date\": \"2026-08-10\",\n  \"end_date\": \"2026-08-12\",\n  \"reason\": \"Family function\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/leaves/requests/", "host": ["{{base_url}}"], "path": ["leaves", "requests", ""] }
+          }
+        },
+        {
+          "name": "List leave requests (mine or team)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaves/requests/?status=PENDING&search=&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", "requests", ""],
+              "query": [
+                { "key": "status", "value": "PENDING" },
+                { "key": "search", "value": "", "description": "search by employee name / reason" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Retrieve single leave request",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaves/requests/{{leave_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", "requests", "{{leave_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Cancel pending leave (Employee)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaves/requests/{{leave_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", "requests", "{{leave_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Approve / Reject leave (Manager)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"manager_comment\": \"Enjoy your time off!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/leaves/requests/{{leave_id}}/decision/",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", "requests", "{{leave_id}}", "decision", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboards",
+      "item": [
+        {
+          "name": "Employee dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/leaves/dashboard/employee/", "host": ["{{base_url}}"], "path": ["leaves", "dashboard", "employee", ""] }
+          }
+        },
+        {
+          "name": "Manager dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/leaves/dashboard/manager/", "host": ["{{base_url}}"], "path": ["leaves", "dashboard", "manager", ""] }
+          }
+        }
+      ]
+    }
+  ]
+}
