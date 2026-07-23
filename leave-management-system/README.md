@@ -1,208 +1,162 @@
-# Employee Leave Management System
+# 🏢 Employee Leave Management System
 
-A full-stack leave application & approval system built for the Technodha
-48-hour take-home assignment.
-
-- **Backend:** Django + Django REST Framework + PostgreSQL + JWT (SimpleJWT)
-- **Frontend:** React.js (Vite) + React Router + Axios
-- **Docs:** Swagger / Redoc via drf-spectacular
-- **Bonus:** Console email notifications, Docker/Compose, unit tests
+A full-stack web application for managing employee leave requests with role-based access for **Employees** and **Managers**.
 
 ---
 
-## 1. Project structure
+## 🚀 Tech Stack
 
-```
-leave-management-system/
-├── backend/                  Django + DRF API
-│   ├── accounts/              custom User model, JWT auth, registration
-│   ├── leaves/                LeaveRequest model, business rules, views
-│   ├── leave_management/      project settings & URLs
-│   ├── requirements.txt
-│   ├── .env.example
-│   └── Dockerfile
-├── frontend/                 React (Vite) SPA
-│   ├── src/
-│   │   ├── api/                axios instance + resource helpers
-│   │   ├── context/             AuthContext (JWT session state)
-│   │   ├── components/          Layout, LeaveTicket, StatusStamp
-│   │   ├── pages/                Login, Register, Dashboards, Apply, History
-│   │   ├── routes/               ProtectedRoute
-│   │   └── styles/               design tokens + component CSS
-│   ├── .env.example
-│   └── Dockerfile
-├── docker-compose.yml         Postgres + backend + frontend, one command
-├── database_schema.sql        Raw PostgreSQL schema (reference)
-└── Employee_Leave_Management.postman_collection.json
-```
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + Vite |
+| Backend | Django + Django REST Framework |
+| Database | PostgreSQL |
+| Auth | JWT (SimpleJWT) |
+| API Docs | Swagger (drf-spectacular) |
 
 ---
 
-## 2. Quick start with Docker (recommended)
+## ✨ Features
 
-```bash
-git clone <this-repo>
-cd leave-management-system
-cp backend/.env.example backend/.env
-docker compose up --build
-```
+### 👤 Employee
+- Register & login securely
+- View leave balance (20 annual days)
+- Apply for leave (Annual, Sick, Casual, Unpaid)
+- Track leave history & request status
 
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000/api
-- Swagger docs: http://localhost:8000/api/docs/
-- Django admin: http://localhost:8000/admin/
+### 🧑‍💼 Manager
+- View all team leave requests
+- Approve or reject leave requests
+- Manage team members
 
-Then, in a second terminal, run migrations and seed demo data:
-
-```bash
-docker compose exec backend python manage.py migrate
-docker compose exec backend python manage.py seed_demo_data
-```
+### 🔐 Admin
+- Full Django admin panel access
+- Manage all users, roles & leave records
 
 ---
 
-## 3. Manual setup (without Docker)
+## 🖥️ Screenshots
 
-### 3.1 Backend
+### Login Page
+![Login](leave-management-system/screenshots/login_page.png)
 
-**Prerequisites:** Python 3.11+, PostgreSQL 14+
+### Register Page
+![Register](leave-management-system/screenshots/register_page.png)
+
+### Employee Dashboard
+![Dashboard](leave-management-system/screenshots/dashboard_page.png)
+
+### Django Admin
+![Admin](leave-management-system/screenshots/django_admin.png)
+
+---
+
+## ⚙️ Setup & Installation
+
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- PostgreSQL 14+
+
+---
+
+### 🔧 Backend Setup
 
 ```bash
-cd backend
+cd leave-management-system/backend
+
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # Mac/Linux
 
+# Install dependencies
 pip install -r requirements.txt
 
-cp .env.example .env
-# Edit .env with your local PostgreSQL credentials
+# Create .env file (copy from example)
+copy .env.example .env
+```
 
-# Create the database (one-time)
-createdb leave_management_db     # or use psql / pgAdmin
+Edit `.env` with your database credentials:
+```env
+USE_SQLITE=False
+DB_NAME=leave_management_db
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+```
 
+```bash
+# Run migrations
 python manage.py migrate
-python manage.py seed_demo_data   # creates demo manager + employees
-python manage.py createsuperuser  # optional, for Django admin access
 
+# Create superuser
+python manage.py createsuperuser
+
+# Start backend server
 python manage.py runserver
 ```
 
-The API is now available at `http://localhost:8000/api/`.
+---
 
-Run the test suite:
-
-```bash
-python manage.py test
-```
-
-### 3.2 Frontend
-
-**Prerequisites:** Node.js 18+
+### 🎨 Frontend Setup
 
 ```bash
-cd frontend
+cd leave-management-system/frontend
+
+# Install dependencies
 npm install
 
-cp .env.example .env
-# VITE_API_BASE_URL should point at your backend, e.g. http://localhost:8000/api
-
+# Start frontend dev server
 npm run dev
 ```
 
-The app is now available at `http://localhost:5173/`.
+---
+
+## 🌐 Running URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend App | http://localhost:5173 |
+| Backend API | http://127.0.0.1:8000 |
+| Django Admin | http://127.0.0.1:8000/admin |
+| API Swagger Docs | http://127.0.0.1:8000/api/schema/swagger-ui/ |
 
 ---
 
-## 4. Demo credentials
+## 👥 Default Roles
 
-Created by `python manage.py seed_demo_data`:
-
-| Role     | Username    | Password       |
-|----------|-------------|----------------|
-| Manager  | `manager1`  | `Manager@123`  |
-| Employee | `employee1` | `Employee@123` |
-| Employee | `employee2` | `Employee@123` |
-| Employee | `employee3` | `Employee@123` |
-
-You can also register new accounts from the app's **Create an account** link —
-employees pick a manager to report to at signup.
+| Role | Access |
+|------|--------|
+| `employee` | Apply for leave, view history, track balance |
+| `manager` | Approve/reject team leave requests |
+| `admin` | Full system access via Django admin |
 
 ---
 
-## 5. Feature checklist (mapped to the brief)
+## 📁 Project Structure
 
-**Authentication**
-- [x] JWT authentication (SimpleJWT, access + refresh, auto-refresh on 401)
-- [x] Login API (`POST /api/auth/login/`)
-- [x] Protected routes (frontend `ProtectedRoute`, backend `IsAuthenticated`/role permissions)
-
-**Employee module**
-- [x] Login, dashboard, apply leave, view leave history, cancel pending leave
-
-**Manager module**
-- [x] View all leave requests for their team, approve/reject, filter by status,
-      view employee leave statistics (dashboard + all-requests search)
-
-**Leave rules**
-- [x] Maximum 20 annual leaves (configurable via `MAX_ANNUAL_LEAVES`)
-- [x] Cannot apply for past dates
-- [x] End date cannot be before start date
-- [x] Cannot apply if it overlaps an existing approved leave
-
-**Dashboards**
-- [x] Employee: remaining / approved / pending leave
-- [x] Manager: pending requests, approved today, total employees
-
-**Frontend expectations**
-- [x] React Router, protected routes, Axios interceptors (auth header +
-      auto token refresh), form validation (client + server), responsive UI,
-      loading states, error handling
-
-**Backend expectations**
-- [x] JWT, DRF ViewSets (`LeaveRequestViewSet`), serializer validation,
-      custom permissions (`IsEmployee`, `IsManager`, `IsOwnerOrManager`),
-      PostgreSQL, proper models (indexes + check constraints), pagination
-      (10/page), search API (`?search=`)
-
-**Bonus**
-- [x] Email notification on apply/decision (console backend)
-- [x] Docker + docker-compose
-- [x] Swagger (`/api/docs/`) and Redoc (`/api/redoc/`) via drf-spectacular
-- [x] Unit tests covering every leave rule (`backend/leaves/tests.py`)
+```
+employee-leave-management-system/
+└── leave-management-system/
+    ├── backend/
+    │   ├── accounts/        # User auth & registration
+    │   ├── leaves/          # Leave requests & approvals
+    │   ├── leave_management/ # Django settings & URLs
+    │   ├── requirements.txt
+    │   └── .env.example
+    └── frontend/
+        ├── src/
+        │   ├── pages/       # Login, Register, Dashboard, etc.
+        │   ├── components/  # Reusable UI components
+        │   ├── api/         # API client & resources
+        │   └── context/     # Auth context
+        └── package.json
+```
 
 ---
 
-## 6. Key API endpoints
+## 📄 License
 
-| Method | Endpoint                                   | Who        | Purpose                          |
-|--------|---------------------------------------------|------------|-----------------------------------|
-| POST   | `/api/auth/login/`                          | Anyone     | Obtain JWT access + refresh token |
-| POST   | `/api/auth/login/refresh/`                  | Anyone     | Refresh an expired access token   |
-| POST   | `/api/auth/register/`                       | Anyone     | Create employee/manager account   |
-| GET    | `/api/auth/me/`                             | Auth'd     | Current user profile              |
-| GET    | `/api/leaves/requests/`                     | Auth'd     | List (own / team) leave requests, filter/search/paginate |
-| POST   | `/api/leaves/requests/`                     | Employee   | Apply for leave                   |
-| DELETE | `/api/leaves/requests/{id}/`                | Employee   | Cancel a pending leave request    |
-| POST   | `/api/leaves/requests/{id}/decision/`       | Manager    | Approve or reject a request       |
-| GET    | `/api/leaves/dashboard/employee/`           | Employee   | Employee dashboard stats          |
-| GET    | `/api/leaves/dashboard/manager/`            | Manager    | Manager dashboard stats           |
-| GET    | `/api/docs/`                                | Anyone     | Swagger UI                        |
-
-Full request/response examples are in
-`Employee_Leave_Management.postman_collection.json` — import it into Postman
-and set the `base_url` collection variable if your backend runs elsewhere.
-
----
-
-## 7. Design notes
-
-The frontend uses a "ledger & ticket-stub" visual language: each leave
-request renders as a torn travel voucher, with a rotated ink-stamp badge
-carrying its status (pending/approved/rejected/cancelled). This was a
-deliberate choice to fit the subject matter rather than a generic dashboard
-template — see `frontend/src/styles/tokens.css` for the full token system.
-
-## 8. Screenshots / demo video
-
-Add screenshots or a short screen recording of the running app here before
-submission, per the assignment's submission requirements.
+This project is open source and available under the [MIT License](LICENSE).
