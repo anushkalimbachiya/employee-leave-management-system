@@ -47,12 +47,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs["password"] != attrs.pop("password2"):
             raise serializers.ValidationError({"password2": "Passwords do not match."})
-        role = attrs.get("role", User.Role.EMPLOYEE)
-        manager = attrs.get("manager")
-        if role == User.Role.EMPLOYEE and manager is None:
-            raise serializers.ValidationError(
-                {"manager": "An employee must be assigned a manager."}
-            )
         return attrs
 
     def create(self, validated_data):
