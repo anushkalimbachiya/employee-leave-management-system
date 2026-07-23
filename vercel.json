@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd leave-management-system/frontend && npm install && npm run build",
+  "outputDirectory": "leave-management-system/frontend/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -4,6 +4,7 @@ Django settings for the Employee Leave Management System.
 from pathlib import Path
 from datetime import timedelta
 from decouple import config, Csv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -64,11 +66,17 @@ TEMPLATES = [
 WSGI_APPLICATION = "leave_management.wsgi.application"
 
 # ---------------------------------------------------------------------------
-# Database - Configurable (SQLite by default or PostgreSQL)
+# Database - Configurable (SQLite / PostgreSQL / Render DATABASE_URL)
 # ---------------------------------------------------------------------------
+DATABASE_URL = config("DATABASE_URL", default="")
 USE_SQLITE = config("USE_SQLITE", default=True, cast=bool)
 
-if USE_SQLITE:
+if DATABASE_URL:
+    # Render / production: use DATABASE_URL env var
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+elif USE_SQLITE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -106,6 +114,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICSFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
