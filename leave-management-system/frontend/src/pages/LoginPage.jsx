@@ -39,11 +39,7 @@ export default function LoginPage() {
             Apply, track, and approve time off in one ledger. Employees see their balance at a
             glance; managers clear the queue in seconds.
           </p>
-          <div className="auth-demo-box">
-            DEMO MANAGER&nbsp;&nbsp;username: manager1 / password: Manager@123
-            <br />
-            DEMO EMPLOYEE&nbsp;&nbsp;username: employee1 / password: Employee@123
-          </div>
+
         </div>
       </div>
 
