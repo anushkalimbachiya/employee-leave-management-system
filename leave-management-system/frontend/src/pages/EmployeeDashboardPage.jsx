@@ -4,11 +4,13 @@ import Layout from "../components/Layout";
 import LeaveTicket from "../components/LeaveTicket";
 import { leavesApi } from "../api/resources";
 import { extractErrorMessage } from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function EmployeeDashboardPage() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     leavesApi
@@ -17,6 +19,16 @@ export default function EmployeeDashboardPage() {
       .catch((err) => setError(extractErrorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
+
+  const initials = user
+    ? ((user.first_name?.[0] || "") + (user.last_name?.[0] || "")).toUpperCase() ||
+      user.username?.[0]?.toUpperCase()
+    : "?";
+
+  const fullName =
+    user?.first_name || user?.last_name
+      ? `${user.first_name} ${user.last_name}`.trim()
+      : user?.username;
 
   return (
     <Layout>
@@ -32,6 +44,64 @@ export default function EmployeeDashboardPage() {
           + Apply for leave
         </Link>
       </div>
+
+      {/* Employee Profile Card */}
+      {user && (
+        <div className="panel" style={{ marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
+            {/* Avatar */}
+            <div style={{
+              width: "64px", height: "64px", borderRadius: "50%",
+              background: "linear-gradient(135deg, #1e3a5f, #2d6a9f)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "1.5rem", fontWeight: "700", color: "#fff",
+              flexShrink: 0, letterSpacing: "0.05em"
+            }}>
+              {initials}
+            </div>
+
+            {/* Info */}
+            <div style={{ flex: 1, minWidth: "200px" }}>
+              <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#1a2e44", marginBottom: "0.2rem" }}>
+                {fullName}
+              </div>
+              <div style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: "0.5rem" }}>
+                @{user.username}
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+                {user.email && (
+                  <span style={{ fontSize: "0.82rem", color: "#4b5563" }}>
+                    📧 {user.email}
+                  </span>
+                )}
+                {user.department && (
+                  <span style={{ fontSize: "0.82rem", color: "#4b5563" }}>
+                    🏢 {user.department}
+                  </span>
+                )}
+                {user.manager_name && (
+                  <span style={{ fontSize: "0.82rem", color: "#4b5563" }}>
+                    👤 Reports to: <strong>{user.manager_name}</strong>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Role badge */}
+            <div>
+              <span style={{
+                padding: "0.3rem 0.9rem", borderRadius: "999px",
+                background: user.role === "MANAGER" ? "#dbeafe" : "#dcfce7",
+                color: user.role === "MANAGER" ? "#1e40af" : "#15803d",
+                fontSize: "0.8rem", fontWeight: "600", textTransform: "uppercase",
+                letterSpacing: "0.06em"
+              }}>
+                {user.role || "Employee"}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {error && <div className="form-error">{error}</div>}
 
